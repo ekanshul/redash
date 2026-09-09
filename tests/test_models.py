@@ -66,7 +66,7 @@ class ShouldScheduleNextTest(TestCase):
     def test_exact_time_rejects_malformed_time(self):
         now = date_parse("2015-10-16 20:10")
         yesterday = date_parse("2015-10-15 23:07")
-        for malformed in ("23:00:garbage", "23:00:00:00", "23", "garbage:00"):
+        for malformed in ("23:00:garbage", "23:00:00:00", "23", "garbage:00", "23:00:60", "23:00:99"):
             with self.assertRaises(ValueError):
                 models.should_schedule_next(yesterday, now, "86400", malformed)
 

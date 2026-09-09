@@ -399,10 +399,13 @@ def should_schedule_next(previous_iteration, now, interval, time=None, day_of_we
         next_iteration = previous_iteration + datetime.timedelta(seconds=ttl)
     else:
         # Accept both "HH:MM" (what the UI sends) and "HH:MM:SS" (common when the
-        # schedule is written through the API); seconds are ignored.
+        # schedule is written through the API); the seconds must be valid but are
+        # otherwise ignored.
         time_parts = time.split(":")
         if len(time_parts) not in (2, 3) or not all(part.isdigit() for part in time_parts):
             raise ValueError("Invalid schedule time {!r}; expected HH:MM or HH:MM:SS".format(time))
+        if len(time_parts) == 3 and int(time_parts[2]) > 59:
+            raise ValueError("Invalid schedule time {!r}; seconds must be between 0 and 59".format(time))
         hour, minute = int(time_parts[0]), int(time_parts[1])
 
         # The following logic is needed for cases like the following:
